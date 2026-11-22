@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>MPI Практикум — вариант 8</title><style>
+:root{--bg:#f6f4ee;--bg2:#efece2;--card:#fff;--bd:#ddd8c8;--fg:#1c2420;--mut:#5f6d66;--a:#b7791f;--b:#0e8f6c;--er:#c0392b;--on:#fff;--term:#14201b;--hd:#f6f4eeee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1311;--bg2:#161d1a;--card:#1b2420;--bd:#2b3a33;--fg:#e9f1ec;--mut:#92a69b;--a:#f5b83d;--b:#3dd6a8;--er:#ff7a6e;--on:#161200;--term:#070a09;--hd:#0e1311ee}}
+:root[data-theme="dark"]{--bg:#0e1311;--bg2:#161d1a;--card:#1b2420;--bd:#2b3a33;--fg:#e9f1ec;--mut:#92a69b;--a:#f5b83d;--b:#3dd6a8;--er:#ff7a6e;--on:#161200;--term:#070a09;--hd:#0e1311ee}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--hd);z-index:40}
+.bl{position:fixed;width:50vmax;height:50vmax;border-radius:50%;filter:blur(90px);opacity:.18;z-index:-1;animation:fl 18s ease-in-out infinite alternate}
+.b1{background:var(--a);left:-15vmax;top:-10vmax}.b2{background:var(--b);right:-15vmax;bottom:-15vmax;animation-delay:-9s}
+@keyframes fl{to{transform:translate(8vmax,6vmax) scale(1.2)}}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--hd);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd)}
+.tabs{max-width:1050px;margin:auto;padding:8px 14px;display:flex;gap:6px;overflow-x:auto}
+.tabs button{white-space:nowrap;padding:8px 14px;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;font:inherit;font-size:14px;cursor:pointer;transition:.2s}
+.tabs button.on{background:var(--a);color:var(--on);border-color:var(--a);font-weight:700}
+main{max-width:1050px;margin:auto;padding:0 14px 50px}
+.hero{padding:44px 0 20px}
+.hero h1{font-size:clamp(28px,6vw,48px);line-height:1.15;margin:0 0 12px;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);font-size:17px;max-width:680px}
+h2{font-size:24px;margin:36px 0 14px;border-left:5px solid var(--a);padding-left:12px}
+h3{margin:0 0 8px;color:var(--a)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.grid .card{margin:0;cursor:default;transition:transform .25s,border-color .25s}
+.grid .card:hover{transform:translateY(-5px);border-color:var(--b)}
+.lk{cursor:pointer!important}
+.num{font-size:38px;font-weight:800;color:var(--b)}
+.tl{border-left:3px solid var(--bd);margin-left:8px;padding-left:20px}.tl div{position:relative;margin-bottom:16px}
+.tl div:before{content:"";position:absolute;left:-29px;top:7px;width:13px;height:13px;border-radius:50%;background:var(--a);box-shadow:0 0 0 5px color-mix(in srgb,var(--a) 25%,transparent)}
+.tl b{color:var(--a)}
+.flow{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+.flow div{flex:1;min-width:140px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:center;font-size:14px;animation:fi .8s both}
+.flow div:nth-child(2){animation-delay:.2s}.flow div:nth-child(3){animation-delay:.4s}.flow div:nth-child(4){animation-delay:.6s}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--bd);padding:7px 9px;text-align:left;font-size:14.5px}th{background:var(--bg2);color:var(--a)}
+code{background:var(--bg2);padding:2px 6px;border-radius:5px;color:var(--b);font-size:13.5px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}.reveal.in{opacity:1;transform:none}
+.cond{border-left:4px solid var(--b);padding-left:12px;margin:0 0 10px}
+.procs{display:flex;gap:10px;overflow-x:auto;padding:12px 2px}
+.pc{min-width:160px;background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:10px;text-align:center}
+.pc input{width:100%;margin-top:4px;padding:7px;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:8px;font:inherit;font-size:15px}
+.pc input:disabled{opacity:.4}.pc label{font-size:12.5px;color:var(--mut);display:block;margin-top:6px;text-align:left}
+.node{width:44px;height:44px;border-radius:50%;margin:0 auto 4px;display:grid;place-items:center;font-weight:800;background:color-mix(in srgb,var(--b) 15%,transparent);border:2px solid var(--b);color:var(--b)}
+.node.act{animation:pu .7s}@keyframes pu{0%{box-shadow:0 0 0 0 var(--a);background:var(--a);color:var(--on)}100%{box-shadow:0 0 0 16px transparent}}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.btns button{font:inherit;padding:9px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--bg2);color:var(--fg);cursor:pointer}
+.btns .run{background:var(--a);color:var(--on);border:0;font-weight:700}
+.term{background:var(--term);border-radius:12px;padding:12px;font:14px/1.7 Consolas,monospace;min-height:64px;color:#3dd6a8}
+.term div{animation:ti .4s}.term .e{color:#ff7a6e}@keyframes ti{from{opacity:0;transform:translateX(-12px)}}
+.pk{position:fixed;width:14px;height:14px;border-radius:50%;background:var(--a);box-shadow:0 0 12px var(--a);z-index:50;pointer-events:none}
+.code{position:relative}.code pre{background:var(--term);color:#d7e6de;border-radius:12px;padding:14px;overflow-x:auto;font:13px/1.55 Consolas,monospace;margin:0}
+.code button{position:absolute;right:8px;top:8px;padding:4px 10px;font-size:12px;border-radius:8px;border:1px solid #3a4a42;background:#1b2420;color:#e9f1ec;cursor:pointer}
+ol li{margin-bottom:4px}.panel[hidden]{display:none}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:20px 14px;border-top:1px solid var(--bd)}
+</style></head><body><div class="bl b1"></div><div class="bl b2"></div><header><div class="tabs" id="tabs"></div></header><main><section class="panel" data-m="0"><div class="hero"><h1>Практикум по параллельному программированию на MPI</h1><p>Пять модулей по пособию М. Э. Абрамяна (ЮФУ). В каждом: теория, условие задания варианта 8, симулятор с изменяемыми данными, решение и код на C.</p></div>
+<div class="grid reveal"><div class="card lk" onclick="go(1)"><h3>Модуль 1</h3><b>Процессы и их ранги</b><p>Основы MPI: запуск параллельной программы, ранг процесса, размер коммуникатора</p></div><div class="card lk" onclick="go(2)"><h3>Модуль 2</h3><b>Обмен сообщениями между процессами</b><p>Блокирующие и неблокирующие пересылки между парами процессов</p></div><div class="card lk" onclick="go(3)"><h3>Модуль 3</h3><b>Операции редукции и производные типы</b><p>Коллективные вычисления над данными всех процессов, составные типы и упаковка</p></div><div class="card lk" onclick="go(4)"><h3>Модуль 4</h3><b>Коллективные операции и коммуникаторы</b><p>Широковещание, сбор и раздача данных, группы процессов</p></div><div class="card lk" onclick="go(5)"><h3>Модуль 5</h3><b>Виртуальные топологии</b><p>Декартовы топологии и топологии графа</p></div></div>
+<h2>Структура любой MPI-программы</h2><div class="flow"><div><b>MPI_Init</b><br>запуск параллельной части</div><div><b>MPI_Comm_rank / size</b><br>ранг и число процессов</div><div><b>Вычисления и обмен</b><br>Send/Recv, коллективные операции</div><div><b>MPI_Finalize</b><br>завершение</div></div>
+<h2>Версии стандарта MPI</h2><div class="tl reveal"><div><b>Май 1994</b> — MPI-1.0, итоговый отчёт MPI Forum.</div><div><b>Июнь 1995</b> — MPI-1.1: уточнения и исправления (именно этот стандарт описан в пособии).</div><div><b>1997</b> — MPI-2.0: односторонние обмены, параллельный ввод-вывод, динамические процессы.</div><div><b>Сентябрь 2012</b> — MPI-3.0 (затем MPI-3.1, июнь 2015): неблокирующие коллективные операции.</div><div><b>9 июня 2021</b> — MPI-4.0, затем MPI-4.1 (2 ноября 2023).</div><div><b>5 июня 2025</b> — MPI-5.0, крупное обновление стандарта.</div></div>
+<h2>Практикум в цифрах</h2><div class="grid reveal"><div class="card"><div class="num" data-to="5">0</div>модулей</div><div class="card"><div class="num" data-to="100">0</div>учебных заданий в приложении</div><div class="card"><div class="num" data-to="24">0</div>варианта проектных заданий</div><div class="card"><div class="num" data-to="8">0</div>ваш вариант</div></div>
+<h2>Содержание практикума</h2><div class="card reveal sc"><table><tr><th>№</th><th>Тема</th><th>Задание на странице</th></tr><tr><td>1</td><td>Процессы и их ранги</td><td>MPIBegin6</td></tr><tr><td>2</td><td>Обмен сообщениями между процессами</td><td>MPIBegin25</td></tr><tr><td>3</td><td>Операции редукции и производные типы</td><td>MPIBegin50</td></tr><tr><td>4</td><td>Коллективные операции и коммуникаторы</td><td>MPIBegin34</td></tr><tr><td>5</td><td>Виртуальные топологии</td><td>MPIBegin95</td></tr></table></div>
+<h2>Средства выполнения (по пособию)</h2><div class="grid reveal"><div class="card"><h3>MPICH 1.2.5</h3>Бесплатная реализация MPI-1.1 для Windows.</div><div class="card"><h3>PT for MPI</h3>Электронный задачник: выдаёт исходные данные и проверяет результаты.</div><div class="card"><h3>Языки</h3>C++ и Паскаль (PascalABC.NET, Lazarus, Delphi).</div></div></section><section class="panel" data-m="1" hidden><div class="hero"><h1>Модуль 1: Процессы и их ранги</h1><p>Основы MPI: запуск параллельной программы, ранг процесса, размер коммуникатора</p></div>
+<div class="card reveal"><p>В MPI одна и та же программа запускается сразу в нескольких процессах. Чтобы процессы вели себя по-разному, каждый из них узнаёт свой ранг (номер от 0 до K−1). Процесс с рангом 0 называют главным, остальные — подчинёнными.</p><div class="sc"><table><tr><th>Функция</th><th>Назначение</th></tr><tr><td><code>MPI_Init</code></td><td>начало параллельной части программы</td></tr><tr><td><code>MPI_Comm_rank</code></td><td>узнать ранг процесса в коммуникаторе</td></tr><tr><td><code>MPI_Comm_size</code></td><td>узнать количество процессов K</td></tr><tr><td><code>MPI_Finalize</code></td><td>завершение параллельной части</td></tr></table></div></div>
+<h2>MPIBegin6</h2><div class="card reveal"><h3>Условие</h3><p class="cond">В каждом процессе дано целое число N (&gt; 0) и набор из N чисел. В подчиненных процессах четного ранга вывести сумму чисел из данного набора, в процессах нечетного ранга вывести среднее арифметическое чисел из данного набора, в главном процессе вывести произведение чисел из данного набора.</p><p><b>Пояснение:</b> Процессы друг с другом не общаются: каждый обрабатывает только свои данные, а выбор действия зависит от ранга (0, нечётный, чётный).</p></div>
+<div class="card reveal"><h3>Выполнение задания</h3><p>Измените числа или число процессов и нажмите «Запустить».</p><div class="procs"></div><div class="btns"><button class="run">▶ Запустить</button><button class="add">+ процесс</button><button class="del">− процесс</button><button class="rst">Сбросить</button></div><div class="term"></div></div>
+<div class="card reveal"><h3>Способ решения</h3><ol><li>Инициализировать MPI (MPI_Init)</li><li>Получить ранг процесса (MPI_Comm_rank)</li><li>Ввести N и набор из N чисел, посчитать сумму и произведение</li><li>Ранг 0 → вывести произведение</li><li>Нечётный ранг → вывести среднее арифметическое</li><li>Чётный ранг > 0 → вывести сумму</li><li>Завершить MPI (MPI_Finalize)</li></ol></div>
+<div class="card reveal"><h3>mpi_begin6.c</h3><div class="code"><button>Копировать</button><pre>#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc, char *argv[]) {
+    int rank, size, n;
+    double a, s = 0, p = 1;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+
+    scanf(&quot;%d&quot;, &amp;n);
+    for (int i = 0; i &lt; n; i++) {
+        scanf(&quot;%lf&quot;, &amp;a);
+        s += a;
+        p *= a;
+    }
+    if (rank == 0)
+        printf(&quot;Процесс 0: произведение = %g\n&quot;, p);
+    else if (rank % 2 == 1)
+        printf(&quot;Процесс %d: среднее = %g\n&quot;, rank, s / n);
+    else
+        printf(&quot;Процесс %d: сумма = %g\n&quot;, rank, s);
+
+    MPI_Finalize();
+    return 0;
+}</pre></div><p>Компиляция и запуск:</p><div class="code"><pre>$ mpicc mpi_begin6.c -o begin
+$ mpirun -np 4 ./begin</pre></div></div>
+<div class="card reveal"><h3>Задания варианта 8</h3><p>4, 6 (процессы и их ранги)</p></div></section><section class="panel" data-m="2" hidden><div class="hero"><h1>Модуль 2: Обмен сообщениями между процессами</h1><p>Блокирующие и неблокирующие пересылки между парами процессов</p></div>
+<div class="card reveal"><p>Процессы MPI имеют раздельную память, поэтому данные передаются сообщениями. Сообщение определяется отправителем, получателем, тегом и коммуникатором. Обычные MPI_Send и MPI_Recv блокирующие, а MPI_Sendrecv объединяет отправку и приём и помогает избежать взаимной блокировки.</p><div class="sc"><table><tr><th>Функция</th><th>Назначение</th></tr><tr><td><code>MPI_Send / MPI_Recv</code></td><td>стандартные блокирующие отправка и приём</td></tr><tr><td><code>MPI_Bsend</code></td><td>отправка с буферизацией</td></tr><tr><td><code>MPI_Sendrecv</code></td><td>одновременные отправка и приём</td></tr><tr><td><code>MPI_Sendrecv_replace</code></td><td>то же, но с одним общим буфером</td></tr><tr><td><code>MPI_Probe, MPI_Get_count</code></td><td>узнать тип и размер сообщения до приёма</td></tr><tr><td><code>MPI_ANY_SOURCE, MPI_ANY_TAG</code></td><td>приём от любого отправителя / с любым тегом</td></tr></table></div></div>
+<h2>MPIBegin25</h2><div class="card reveal"><h3>Условие</h3><p class="cond">В каждом процессе дано вещественное число. С помощью функции MPI_Sendrecv_replace поменять порядок исходных чисел на обратный (число из процесса 0 должно быть передано в последний процесс, число из процесса 1 — в предпоследний процесс, …, число из последнего процесса — в процесс 0). В каждом процессе вывести полученное число.</p><p><b>Пояснение:</b> Партнёр процесса с рангом r — процесс size−1−r. Оба обмениваются числами одним вызовом, поэтому взаимной блокировки нет. При нечётном K средний процесс сам себе партнёр и свой обмен пропускает.</p></div>
+<div class="card reveal"><h3>Выполнение задания</h3><p>Измените числа или число процессов и нажмите «Запустить».</p><div class="procs"></div><div class="btns"><button class="run">▶ Запустить</button><button class="add">+ процесс</button><button class="del">− процесс</button><button class="rst">Сбросить</button></div><div class="term"></div></div>
+<div class="card reveal"><h3>Способ решения</h3><ol><li>Получить ранг и размер коммуникатора</li><li>Ввести своё число</li><li>Вычислить партнёра: size − 1 − rank</li><li>Если партнёр ≠ rank — вызвать MPI_Sendrecv_replace</li><li>Вывести полученное число</li></ol></div>
+<div class="card reveal"><h3>mpi_begin25.c</h3><div class="code"><button>Копировать</button><pre>#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc, char *argv[]) {
+    int rank, size;
+    double x;
+    MPI_Status st;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+
+    scanf(&quot;%lf&quot;, &amp;x);
+    int partner = size - 1 - rank;
+    if (partner != rank)
+        MPI_Sendrecv_replace(&amp;x, 1, MPI_DOUBLE,
+                             partner, 0,   /* кому, тег */
+                             partner, 0,   /* от кого, тег */
+                             MPI_COMM_WORLD, &amp;st);
+    printf(&quot;Процесс %d: получено %g\n&quot;, rank, x);
+
+    MPI_Finalize();
+    return 0;
+}</pre></div><p>Компиляция и запуск:</p><div class="code"><pre>$ mpicc mpi_begin25.c -o begin
+$ mpirun -np 4 ./begin</pre></div></div>
+<div class="card reveal"><h3>Задания варианта 8</h3><p>7, 13, 16, 20, 23, 25, 26, 28</p></div></section><section class="panel" data-m="3" hidden><div class="hero"><h1>Модуль 3: Операции редукции и производные типы</h1><p>Коллективные вычисления над данными всех процессов, составные типы и упаковка</p></div>
+<div class="card reveal"><p>Редукция объединяет данные всех процессов в один результат с помощью операции (сумма, произведение, минимум, максимум и др.). Для составных данных используют производные типы MPI или упаковку MPI_Pack/MPI_Unpack.</p><div class="sc"><table><tr><th>Функция</th><th>Назначение</th></tr><tr><td><code>MPI_Reduce</code></td><td>редукция, результат в одном процессе</td></tr><tr><td><code>MPI_Allreduce</code></td><td>редукция, результат во всех процессах</td></tr><tr><td><code>MPI_Scan</code></td><td>префиксная редукция</td></tr><tr><td><code>MPI_Reduce_scatter</code></td><td>редукция и раздача частей результата</td></tr><tr><td><code>MPI_MAXLOC / MPI_MINLOC</code></td><td>значение и ранг процесса, где оно найдено</td></tr><tr><td><code>MPI_Type_struct, MPI_Pack</code></td><td>производные типы и упаковка данных</td></tr></table></div></div>
+<h2>MPIBegin50</h2><div class="card reveal"><h3>Условие</h3><p class="cond">В каждом процессе дан набор из K + 5 целых чисел, где K — количество процессов. Используя функцию MPI_Reduce для операции MPI_MAXLOC, найти максимальное значение среди элементов данных наборов с одним и тем же порядковым номером и ранг процесса, содержащего это максимальное значение. Вывести в главном процессе вначале все максимумы, а затем — ранги содержащих их процессов.</p><p><b>Пояснение:</b> Каждый элемент упаковывается в пару «значение — ранг» (тип MPI_2INT). Операция MPI_MAXLOC выбирает пару с наибольшим значением; при равенстве возвращается меньший ранг. Результат получает только процесс 0.</p></div>
+<div class="card reveal"><h3>Выполнение задания</h3><p>Измените числа или число процессов и нажмите «Запустить».</p><div class="procs"></div><div class="btns"><button class="run">▶ Запустить</button><button class="add">+ процесс</button><button class="del">− процесс</button><button class="rst">Сбросить</button></div><div class="term"></div></div>
+<div class="card reveal"><h3>Способ решения</h3><ol><li>Получить ранг и размер, ввести K+5 чисел</li><li>Сформировать массив пар {значение, ранг}</li><li>Вызвать MPI_Reduce с типом MPI_2INT и операцией MPI_MAXLOC, корень — 0</li><li>В процессе 0 вывести все максимумы</li><li>Затем вывести все ранги</li></ol></div>
+<div class="card reveal"><h3>mpi_begin50.c</h3><div class="code"><button>Копировать</button><pre>#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct { int val; int rank; } Pair;
+
+int main(int argc, char *argv[]) {
+    int rank, size;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+
+    int n = size + 5;
+    Pair *in = malloc(n * sizeof(Pair));
+    Pair *out = malloc(n * sizeof(Pair));
+    for (int i = 0; i &lt; n; i++) {
+        scanf(&quot;%d&quot;, &amp;in[i].val);
+        in[i].rank = rank;
+    }
+    MPI_Reduce(in, out, n, MPI_2INT, MPI_MAXLOC, 0, MPI_COMM_WORLD);
+
+    if (rank == 0) {
+        for (int i = 0; i &lt; n; i++) printf(&quot;%d &quot;, out[i].val);
+        printf(&quot;\n&quot;);
+        for (int i = 0; i &lt; n; i++) printf(&quot;%d &quot;, out[i].rank);
+        printf(&quot;\n&quot;);
+    }
+    free(in); free(out);
+    MPI_Finalize();
+    return 0;
+}</pre></div><p>Компиляция и запуск:</p><div class="code"><pre>$ mpicc mpi_begin50.c -o begin
+$ mpirun -np 4 ./begin</pre></div></div>
+<div class="card reveal"><h3>Задания варианта 8</h3><p>редукции: 48, 50, 55, 56; производные типы и упаковка: 59, 61, 64, 68, 70</p></div></section><section class="panel" data-m="4" hidden><div class="hero"><h1>Модуль 4: Коллективные операции и коммуникаторы</h1><p>Широковещание, сбор и раздача данных, группы процессов</p></div>
+<div class="card reveal"><p>Коллективные операции выполняются сразу всеми процессами коммуникатора: рассылка (Bcast, Scatter), сбор (Gather) и обмен «все со всеми» (Alltoall). Варианты с буквой v (Gatherv, Scatterv) работают с блоками разной длины. Группы процессов позволяют создавать новые коммуникаторы.</p><div class="sc"><table><tr><th>Функция</th><th>Назначение</th></tr><tr><td><code>MPI_Bcast</code></td><td>рассылка данных из одного процесса всем</td></tr><tr><td><code>MPI_Scatter / Scatterv</code></td><td>раздача частей массива</td></tr><tr><td><code>MPI_Gather / Gatherv</code></td><td>сбор данных в одном процессе</td></tr><tr><td><code>MPI_Allgather, MPI_Alltoall</code></td><td>сбор и обмен во всех процессах</td></tr><tr><td><code>MPI_Comm_group, MPI_Group_incl</code></td><td>создание групп</td></tr><tr><td><code>MPI_Comm_create, MPI_Comm_split</code></td><td>создание новых коммуникаторов</td></tr></table></div></div>
+<h2>MPIBegin34</h2><div class="card reveal"><h3>Условие</h3><p class="cond">В каждом процессе дан набор из R + 2 целых чисел, где число R равно рангу процесса (в процессе 0 даны 2 числа, в процессе 1 даны 3 числа, и т. д.). Используя функцию MPI_Gatherv, переслать эти наборы в главный процесс и вывести полученные наборы в порядке возрастания рангов переславших их процессов (первым вывести набор, данный в главном процессе).</p><p><b>Пояснение:</b> Наборы имеют разную длину, поэтому используется MPI_Gatherv: массив counts задаёт размер блока каждого процесса, массив displs — смещение блока в общем буфере главного процесса.</p></div>
+<div class="card reveal"><h3>Выполнение задания</h3><p>Измените числа или число процессов и нажмите «Запустить».</p><div class="procs"></div><div class="btns"><button class="run">▶ Запустить</button><button class="add">+ процесс</button><button class="del">− процесс</button><button class="rst">Сбросить</button></div><div class="term"></div></div>
+<div class="card reveal"><h3>Способ решения</h3><ol><li>Ввести R+2 чисел (R — ранг)</li><li>В главном процессе заполнить counts[i] = i + 2</li><li>Вычислить displs[i] — сумму предыдущих counts</li><li>Вызвать MPI_Gatherv</li><li>В процессе 0 вывести собранный буфер</li></ol></div>
+<div class="card reveal"><h3>mpi_begin34.c</h3><div class="code"><button>Копировать</button><pre>#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(int argc, char *argv[]) {
+    int rank, size;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+
+    int cnt = rank + 2, a[100];
+    for (int i = 0; i &lt; cnt; i++) scanf(&quot;%d&quot;, &amp;a[i]);
+
+    int *counts = NULL, *displs = NULL, *buf = NULL, total = 0;
+    if (rank == 0) {
+        counts = malloc(size * sizeof(int));
+        displs = malloc(size * sizeof(int));
+        for (int i = 0; i &lt; size; i++) {
+            counts[i] = i + 2;
+            displs[i] = total;
+            total += counts[i];
+        }
+        buf = malloc(total * sizeof(int));
+    }
+    MPI_Gatherv(a, cnt, MPI_INT, buf, counts, displs, MPI_INT,
+                0, MPI_COMM_WORLD);
+    if (rank == 0)
+        for (int i = 0; i &lt; total; i++) printf(&quot;%d &quot;, buf[i]);
+
+    MPI_Finalize();
+    return 0;
+}</pre></div><p>Компиляция и запуск:</p><div class="code"><pre>$ mpicc mpi_begin34.c -o begin
+$ mpirun -np 4 ./begin</pre></div></div>
+<div class="card reveal"><h3>Задания варианта 8</h3><p>коллективная пересылка: 30, 34, 39, 41, 44, 46; группы и коммуникаторы: 72, 75, 77, 78, 81</p></div></section><section class="panel" data-m="5" hidden><div class="hero"><h1>Модуль 5: Виртуальные топологии</h1><p>Декартовы топологии и топологии графа</p></div>
+<div class="card reveal"><p>Виртуальная топология задаёт логическую схему связей между процессами (решётка, кольцо, граф) независимо от физического устройства. В декартовой топологии процессы расположены в узлах n-мерной решётки, а функция MPI_Cart_shift сама определяет соседей по выбранному направлению.</p><div class="sc"><table><tr><th>Функция</th><th>Назначение</th></tr><tr><td><code>MPI_Cart_create</code></td><td>создать декартову топологию</td></tr><tr><td><code>MPI_Cart_coords / Cart_rank</code></td><td>координаты ↔ ранг процесса</td></tr><tr><td><code>MPI_Cart_shift</code></td><td>ранги соседей для сдвига</td></tr><tr><td><code>MPI_Cart_sub</code></td><td>выделение подрешёток</td></tr><tr><td><code>MPI_Graph_create</code></td><td>топология графа</td></tr><tr><td><code>MPI_PROC_NULL</code></td><td>«несуществующий» сосед на границе решётки</td></tr></table></div></div>
+<h2>MPIBegin95</h2><div class="card reveal"><h3>Условие</h3><p class="cond">В каждом подчиненном процессе дано вещественное число. Определить для всех процессов декартову топологию в виде одномерной решетки и осуществить простой сдвиг исходных данных с шагом −1 (число из каждого подчиненного процесса пересылается в предыдущий процесс). Для определения рангов посылающих и принимающих процессов использовать функцию MPI_Cart_shift, пересылку выполнять с помощью функций MPI_Send и MPI_Recv. Во всех процессах, получивших данные, вывести эти данные.</p><p><b>Пояснение:</b> Одномерная непериодическая решётка: у процесса 0 нет предыдущего соседа, у последнего нет следующего. MPI_Cart_shift с шагом −1 возвращает source = rank+1 и dest = rank−1, а на границе подставляет MPI_PROC_NULL. Поэтому последний процесс ничего не получает.</p></div>
+<div class="card reveal"><h3>Выполнение задания</h3><p>Измените числа или число процессов и нажмите «Запустить».</p><div class="procs"></div><div class="btns"><button class="run">▶ Запустить</button><button class="add">+ процесс</button><button class="del">− процесс</button><button class="rst">Сбросить</button></div><div class="term"></div></div>
+<div class="card reveal"><h3>Способ решения</h3><ol><li>Создать топологию: dims[0] = size, periods[0] = 0 (MPI_Cart_create)</li><li>Вызвать MPI_Cart_shift(cart, 0, −1, &source, &dest)</li><li>Подчинённые процессы (ранг > 0) отправляют число в dest через MPI_Send</li><li>Процессы с source ≠ MPI_PROC_NULL принимают число через MPI_Recv</li><li>Вывести полученные данные</li></ol></div>
+<div class="card reveal"><h3>mpi_begin95.c</h3><div class="code"><button>Копировать</button><pre>#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc, char *argv[]) {
+    int rank, size, src, dst;
+    double x = 0, y;
+    MPI_Comm cart;
+    MPI_Status st;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+
+    int dims[1] = { size }, periods[1] = { 0 };
+    MPI_Cart_create(MPI_COMM_WORLD, 1, dims, periods, 0, &amp;cart);
+    MPI_Comm_rank(cart, &amp;rank);
+    MPI_Cart_shift(cart, 0, -1, &amp;src, &amp;dst);
+
+    if (rank &gt; 0) scanf(&quot;%lf&quot;, &amp;x);       /* данные только у подчинённых */
+    if (rank &gt; 0)
+        MPI_Send(&amp;x, 1, MPI_DOUBLE, dst, 0, cart);
+    if (src != MPI_PROC_NULL) {
+        MPI_Recv(&amp;y, 1, MPI_DOUBLE, src, 0, cart, &amp;st);
+        printf(&quot;Процесс %d: получено %g\n&quot;, rank, y);
+    }
+    MPI_Finalize();
+    return 0;
+}</pre></div><p>Компиляция и запуск:</p><div class="code"><pre>$ mpicc mpi_begin95.c -o begin
+$ mpirun -np 4 ./begin</pre></div></div>
+<div class="card reveal"><h3>Задания варианта 8</h3><p>виртуальные топологии: 83, 88, 91, 94, 95, 98</p></div></section></main><footer>По материалам М. Э. Абрамяна «Практикум по параллельному программированию с использованием технологии MPI», ЮФУ, 2011 · Стандарты: mpi-forum.org</footer><script>const num=s=>String(s).split(/[\s,;]+/).filter(x=>x!=='').map(Number),f=x=>Number.isInteger(x)?String(x):String(+x.toFixed(4));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');const n=e.target.querySelector('[data-to]');if(n&&!n.d){n.d=1;const to=+n.dataset.to,t0=performance.now();(function s(t){const k=Math.min(1,(t-t0)/1400);n.textContent=Math.round(to*k);if(k<1)requestAnimationFrame(s)})(t0)}}}),{threshold:.15});
+document.querySelectorAll('.code button').forEach(b=>b.onclick=()=>{try{navigator.clipboard.writeText(b.nextElementSibling.innerText)}catch(x){}b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)});
+const names=['Главная','Модуль 1','Модуль 2','Модуль 3','Модуль 4','Модуль 5'],P=[...document.querySelectorAll('.panel')],inited={};
+document.getElementById('tabs').innerHTML=names.map((n,i)=>`<button onclick="go(${i})">${n}</button>`).join('');
+function go(i){P.forEach((p,k)=>p.hidden=k!=i);document.querySelectorAll('#tabs button').forEach((b,k)=>b.classList.toggle('on',k==i));
+ if(i&&!inited[i]){inited[i]=1;sim(P[i])}P[i].querySelectorAll('.reveal').forEach(e=>{e.classList.remove('in');io.observe(e)});scrollTo(0,0);try{history.replaceState(null,'','#m'+i)}catch(x){}}
+
+function sim(root){const M=root.dataset.m,$=s=>root.querySelector(s);
+const A=(l,k)=>[l,k];
+const S={
+1:{f:[A('N','n'),A('Набор чисел','a')],def:[{n:3,a:'2, 3, 4'},{n:4,a:'1, 2, 3, 4'},{n:3,a:'5, 10, 15'},{n:2,a:'6, 8'}],nw:()=>({n:2,a:'1, 2'}),
+ run(P){const o=[];P.forEach((p,r)=>{const n=Math.trunc(p.n),a=num(p.a).slice(0,n);if(!(n>0)||a.length<n||a.some(isNaN))throw`Процесс ${r}: нужно ввести N>0 чисел`;const s=a.reduce((x,y)=>x+y,0);o[r]=r==0?'произведение = '+f(a.reduce((x,y)=>x*y,1)):r%2?'среднее = '+f(s/n):'сумма = '+f(s)});return{o}}},
+2:{f:[A('Число','a')],def:[1.5,2.5,3.5,4.5].map(a=>({a})),nw:()=>({a:0}),
+ run(P){const K=P.length,v=P.map(p=>+p.a);if(v.some(isNaN))throw'Введите числа';const o=[],m=[];v.forEach((_,r)=>{o[r]='получено '+f(v[K-1-r]);if(K-1-r!=r)m.push([r,K-1-r])});return{o,m}}},
+3:{f:[A('Набор из K+5 целых','a')],def:[[5,2,9,1,7,3,8,4],[6,8,2,5,7,1,9,3],[4,3,10,6,2,9,5,7]].map(a=>({a:a.join(', ')})),nw:()=>({a:''}),
+ norm(P){P.forEach(p=>{const a=num(p.a).filter(x=>!isNaN(x));while(a.length<P.length+5)a.push(0);p.a=a.slice(0,P.length+5).join(', ')})},
+ run(P){const K=P.length,L=K+5,D=P.map(p=>num(p.a).map(Math.trunc));if(D.some(d=>d.length<L||d.some(isNaN)))throw`В каждом наборе нужно ровно K+5 = ${L} целых чисел`;const mx=[],rk=[];for(let j=0;j<L;j++){let m=-Infinity,r=0;D.forEach((d,i)=>{if(d[j]>m){m=d[j];r=i}});mx.push(m);rk.push(r)}const o=P.map(()=>'');o[0]='максимумы: '+mx.join(', ')+'<br>ранги: '+rk.join(', ');return{o,m:P.map((_,r)=>r?[r,0]:null).filter(Boolean)}}},
+4:{f:[A('Набор из R+2 чисел','a')],def:[[1,2],[3,4,5],[6,7,8,9],[10,11,12,13,14]].map(a=>({a:a.join(', ')})),nw:()=>({a:''}),
+ norm(P){P.forEach((p,r)=>{const a=num(p.a).filter(x=>!isNaN(x));while(a.length<r+2)a.push(0);p.a=a.slice(0,r+2).join(', ')})},
+ run(P){const D=P.map(p=>num(p.a));if(D.some((d,r)=>d.length<r+2||d.some(isNaN)))throw'Процесс R должен иметь ровно R+2 числа';const o=P.map((_,r)=>'отправил '+D[r].length+' чисел');o[0]+='<br>получено: '+D.flat().join(', ');return{o,m:P.map((_,r)=>r?[r,0]:null).filter(Boolean)}}},
+5:{f:[A('Вещественное число','a')],def:[0,10.5,20.5,30.5].map(a=>({a})),nw:()=>({a:0}),
+ run(P){const K=P.length,v=P.map(p=>+p.a);if(v.slice(1).some(isNaN))throw'Введите числа';const o=[],m=[];for(let r=0;r<K;r++){if(r<K-1){o[r]='от процесса '+(r+1)+' получено '+f(v[r+1]);m.push([r+1,r])}else o[r]='данных нет (источник — MPI_PROC_NULL)'}return{o,m}}}
+}[M];
+let P=JSON.parse(JSON.stringify(S.def));
+const draw=()=>{$(".procs").innerHTML=P.map((p,r)=>`<div class="pc"><div class="node" data-n="${r}">${r}</div><b>Процесс ${r}</b>${S.f.map(([l,k])=>`<label>${l}</label><input data-r="${r}" data-k="${k}" value="${p[k]}" ${M==5&&r==0?'disabled placeholder="нет данных"':''}>`).join('')}</div>`).join('');
+ root.querySelectorAll('.procs input').forEach(i=>i.oninput=()=>{P[i.dataset.r][i.dataset.k]=i.value})};
+const pk=(a,b)=>new Promise(res=>{const A=$('[data-n="'+a+'"]').getBoundingClientRect(),B=$('[data-n="'+b+'"]').getBoundingClientRect(),d=document.createElement('div');d.className='pk';document.body.append(d);
+ d.animate([{left:A.x+16+'px',top:A.y+16+'px'},{left:B.x+16+'px',top:B.y+16+'px'}],{duration:800,easing:'ease-in-out',fill:'forwards'}).onfinish=()=>{d.remove();res()}});
+const T=$('.term');
+$('.run').onclick=async()=>{T.innerHTML='';let R;try{R=S.run(P)}catch(e){T.innerHTML=`<div class="e">⚠ ${e}</div>`;return}
+ if(R.m)await Promise.all(R.m.map(([a,b])=>pk(a,b)));
+ for(let r=0;r<P.length;r++){if(R.o[r]==='')continue;const n=$('[data-n="'+r+'"]');n.classList.remove('act');void n.offsetWidth;n.classList.add('act');T.innerHTML+=`<div>[Процесс ${r}] ${R.o[r]}</div>`;await new Promise(z=>setTimeout(z,450))}};
+$('.add').onclick=()=>{P.push(S.nw());S.norm&&S.norm(P);draw()};
+$('.del').onclick=()=>{if(P.length>2){P.pop();S.norm&&S.norm(P);draw()}};
+$('.rst').onclick=()=>{P=JSON.parse(JSON.stringify(S.def));T.innerHTML='';draw()};
+draw()}
+go(Math.min(5,Math.max(0,+(location.hash.slice(2))||0)));</script></body></html>
